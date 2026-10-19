@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Icon Countdown</title>
+<meta name="theme-color" content="#14161f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Icons">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Lilita+One&display=swap">
+<style>
+:root {
+  --bg: #eef0f5;
+  --panel: #ffffff;
+  --sunk: #e3e6ee;
+  --ink: #161925;
+  --muted: #5d6478;
+  --line: #d3d7e2;
+  --accent: #ff5a2e;
+  --accent-ink: #ffffff;
+  --accent-soft: #ffe4da;
+  --good: #1d8a52;
+  --good-soft: #dcf3e6;
+  --warn: #a76400;
+  --warn-soft: #fdf0d6;
+  --bad: #c7322b;
+  --bad-soft: #fbe1df;
+  --display: "Lilita One", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
+  --r: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12141c;
+    --panel: #1b1e29;
+    --sunk: #242836;
+    --ink: #eef0f6;
+    --muted: #9aa1b5;
+    --line: #2e3344;
+    --accent: #ff6a41;
+    --accent-ink: #1a0d08;
+    --accent-soft: #3a2119;
+    --good: #4cc98a;
+    --good-soft: #17301f;
+    --warn: #f0b13d;
+    --warn-soft: #33270f;
+    --bad: #ff7b72;
+    --bad-soft: #3a1b1a;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.45 var(--body);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+[hidden] { display: none !important; }
+img { max-width: 100%; display: block; }
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--accent); }
+.wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: calc(env(safe-area-inset-top, 0px) + 12px) calc(env(safe-area-inset-bottom, 0px) + 96px);
+  display: grid;
+  gap: 16px;
+}
+header.top { display: flex; align-items: center; gap: 12px; }
+.brand { font-family: var(--display); font-size: 26px; letter-spacing: .5px; line-height: 1; flex: 1; min-width: 0; }
+.brand small { display: block; font-family: var(--body); font-size: 13px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-top: 4px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 99px; font-size: 13px; font-weight: 600; background: var(--sunk); color: var(--muted); white-space: nowrap; }
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.pill.live { background: var(--accent-soft); color: var(--accent); }
+.pill.live::before { animation: blink 1.2s infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+nav.tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  background: var(--panel); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+}
+nav.tabs button { border: 0; background: none; padding: 12px 4px 14px; font-weight: 600; font-size: 14px; color: var(--muted); cursor: pointer; }
+nav.tabs button[aria-current="true"] { color: var(--accent); box-shadow: inset 0 3px 0 var(--accent); }
+.card { background: var(--panel); border-radius: var(--r); padding: 16px; display: grid; gap: 12px; border: 1px solid var(--line); min-width: 0; }
+.card h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.card h3 { margin: 0; font-size: 15px; font-weight: 700; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+p { margin: 0; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.row > .grow { flex: 1; min-width: 0; }
+.btn { border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 700; cursor: pointer; background: var(--sunk); color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.danger { background: var(--bad-soft); color: var(--bad); }
+.btn.ghost { background: transparent; border: 1px solid var(--line); }
+.btn.small { min-height: 36px; padding: 6px 12px; font-size: 14px; border-radius: 10px; }
+.btn.block { width: 100%; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn:focus-visible, input:focus-visible, select:focus-visible, .tile:focus-visible, .gamecard:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+label.field { display: grid; gap: 6px; font-weight: 600; font-size: 14px; }
+input[type=text], input[type=password], input[type=url], input[type=number], input[type=datetime-local], select {
+  width: 100%; min-width: 0; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font-size: 16px;
+}
+.gamelist { display: grid; gap: 10px; }
+.gamecard { display: grid; grid-template-columns: 64px 1fr auto; gap: 12px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; cursor: pointer; text-align: left; width: 100%; }
+.gamecard .meta { min-width: 0; display: grid; gap: 2px; }
+.gamecard .name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gicon { width: 64px; height: 64px; border-radius: 12px; background: var(--sunk); object-fit: cover; }
+.gicon.big { width: 88px; height: 88px; border-radius: 16px; }
+.gicon.broken { object-position: -999px -999px; color: transparent; overflow: hidden; }
+.chev { color: var(--muted); font-size: 22px; }
+.empty { text-align: center; padding: 28px 16px; display: grid; gap: 12px; justify-items: center; }
+.empty .art { font-family: var(--display); font-size: 44px; color: var(--accent); line-height: 1; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 10px; }
+.tile { position: relative; border: 2px dashed var(--line); border-radius: 14px; background: var(--sunk); aspect-ratio: 1; max-width: 100%; overflow: hidden; cursor: pointer; padding: 0; display: grid; place-items: center; }
+.tile.has { border-style: solid; border-color: transparent; }
+.tile img { width: 100%; height: 100%; object-fit: cover; }
+.tile .tag { position: absolute; left: 6px; top: 6px; font-family: var(--display); font-size: 15px; background: var(--accent); color: var(--accent-ink); padding: 1px 7px 0; border-radius: 7px; letter-spacing: .5px; }
+.tile .tag.live { background: var(--good); color: #fff; }
+.tile .add { font-size: 13px; font-weight: 600; color: var(--muted); padding-top: 18px; }
+.tile .st { position: absolute; left: 6px; right: 6px; bottom: 6px; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 4px; text-align: center; background: var(--panel); color: var(--muted); }
+.tile .st.good { color: var(--good); }
+.tile .st.warn { color: var(--warn); }
+.tile .st.bad { color: var(--bad); }
+.tile .x { position: absolute; right: 4px; top: 4px; width: 28px; height: 28px; border-radius: 50%; border: 0; background: var(--bad); color: #fff; font-weight: 800; cursor: pointer; }
+.clock { font-family: var(--display); font-size: clamp(40px, 13vw, 64px); line-height: 1; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
+.clock small { font-size: .38em; color: var(--muted); letter-spacing: 0; margin-left: 2px; }
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.timeline li { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.timeline li:last-child { border-bottom: 0; }
+.timeline .badge { font-family: var(--display); text-align: center; border-radius: 8px; padding: 3px 0 1px; background: var(--sunk); color: var(--muted); }
+.timeline li.done .badge { background: var(--good-soft); color: var(--good); }
+.timeline li.now .badge { background: var(--accent); color: var(--accent-ink); }
+.timeline .when { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+.banner { border-radius: 12px; padding: 12px 14px; font-size: 14px; display: grid; gap: 4px; }
+.banner.bad { background: var(--bad-soft); color: var(--bad); }
+.banner.warn { background: var(--warn-soft); color: var(--warn); }
+.banner.good { background: var(--good-soft); color: var(--good); }
+.banner b { color: inherit; }
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.log li { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; border-left-width: 4px; }
+.log li.good { border-left-color: var(--good); }
+.log li.problem { border-left-color: var(--bad); }
+.log li.warn { border-left-color: var(--warn); }
+.log .t { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.log .m { font-size: 14px; color: var(--muted); white-space: pre-line; overflow-wrap: anywhere; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; }
+.check input { width: 22px; height: 22px; margin-top: 1px; accent-color: var(--accent); flex: none; }
+.progress { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.progress li { display: flex; gap: 10px; align-items: center; color: var(--muted); }
+.progress li.done { color: var(--good); }
+.progress li.doing { color: var(--ink); font-weight: 600; }
+.progress li::before { content: "○"; width: 18px; text-align: center; }
+.progress li.done::before { content: "✓"; }
+.progress li.doing::before { content: "◐"; animation: spin 1s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.qr { background: #fff; padding: 12px; border-radius: 12px; width: min(240px, 100%); justify-self: center; }
+.qr svg, .qr img { width: 100%; height: auto; display: block; }
+.code { font-family: var(--mono); font-size: 14px; background: var(--sunk); padding: 8px 10px; border-radius: 8px; overflow-wrap: anywhere; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 74px); z-index: 20; background: var(--ink); color: var(--bg); padding: 12px 16px; border-radius: 12px; font-weight: 600; max-width: calc(100% - 32px); box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+.toast.bad { background: var(--bad); color: #fff; }
+.back { border: 0; background: none; padding: 6px 0; color: var(--accent); font-weight: 700; cursor: pointer; justify-self: start; }
+details summary { cursor: pointer; font-weight: 700; color: var(--accent); }
+details[open] summary { margin-bottom: 8px; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 380px) { .split { grid-template-columns: 1fr; } }
+.hero-game { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; }
+.hero-game h1 { margin: 0; font-size: 22px; line-height: 1.15; text-wrap: balance; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<nav class="tabs" id="tabs" hidden>
+  <button type="button" data-tab="games">Games</button>
+  <button type="button" data-tab="activity">Activity</button>
+  <button type="button" data-tab="settings">Settings</button>
+</nav>
+<div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="picker" accept="image/*" hidden>
+<script src="vendor/sodium.js"></script>
+<script src="vendor/qrcode.js"></script>
+<script>
+"use strict";
+const APP_VERSION = "1.0.0";
+const REPO_NAME = "roblox-icon-countdown";
+const DEFAULT_HOURS = [24, 12, 6, 4, 3, 2, 1, 0];
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
+};
+const API = store.get("ic_api") || "https://api.github.com";
+const BUNDLE = (() => { const el = document.getElementById("bundle"); try { return el ? JSON.parse(el.textContent) : null; } catch (e) { return null; } })();
+const S = {
+  token: null, login: null, repo: null, head: null, tree: {}, games: {}, state: { games: {}, log: [] }, settings: {},
+  secrets: new Set(), checker: { enabled: null, run: null }, view: "games", gameId: null,
+  pending: {}, draft: {}, loaded: false, setup: null, showQr: false, confirm: null, busy: false
+};
+const $ = (sel, root = document) => root.querySelector(sel);
+const app = $("#app");
+const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function b64encodeBytes(bytes) {
+  let s = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const b64encodeText = (t) => b64encodeBytes(new TextEncoder().encode(t));
+const b64decodeText = (b) => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, "")), (c) => c.charCodeAt(0)));
+
+let toastTimer = null;
+function toast(msg, bad = false) {
+  const el = $("#toast");
+  el.textContent = msg;
+  el.className = "toast" + (bad ? " bad" : "");
+  el.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.hidden = true; }, bad ? 6000 : 3000);
+}
+
+class GhError extends Error { constructor(status, message) { super(message); this.status = status; } }
+
+async function gh(method, path, body) {
+  const res = await fetch(API + path, {
+    method,
+    headers: {
+      Authorization: "Bearer " + S.token,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      ...(body ? { "Content-Type": "application/json" } : {})
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    cache: "no-store"
+  });
+  if (res.status === 204) return {};
+  const text = await res.text();
+  let data = {};
+  try { data = text ? JSON.parse(text) : {}; } catch (e) { data = { message: text }; }
+  if (!res.ok) throw new GhError(res.status, data.message || ("GitHub said " + res.status));
+  return data;
+}
+
+const R = () => "/repos/" + S.repo;
+const blobCache = new Map();
+async function blobB64(sha) {
+  if (blobCache.has(sha)) return blobCache.get(sha);
+  const b = await gh("GET", R() + "/git/blobs/" + sha);
+  const v = b.content.replace(/\s/g, "");
+  blobCache.set(sha, v);
+  return v;
+}
+async function readJson(path, fallback) {
+  const sha = S.tree[path];
+  if (!sha) return fallback;
+  try { return JSON.parse(b64decodeText(await blobB64(sha))); } catch (e) { return fallback; }
+}
+
+async function loadRepo(force) {
+  const ref = await gh("GET", R() + "/git/ref/heads/main");
+  if (!force && ref.object.sha === S.head && S.loaded) return false;
+  const commit = await gh("GET", R() + "/git/commits/" + ref.object.sha);
+  const tree = await gh("GET", R() + "/git/trees/" + commit.tree.sha + "?recursive=1");
+  const map = {};
+  for (const e of tree.tree) if (e.type === "blob") map[e.path] = e.sha;
+  S.tree = map;
+  S.head = ref.object.sha;
+  S.settings = await readJson("settings.json", {});
+  S.settings.accounts = S.settings.accounts && S.settings.accounts.length ? S.settings.accounts : [{ id: "MAIN", label: "My games" }];
+  const st = await readJson("state.json", {});
+  S.state = { games: {}, log: [], ...st };
+  const games = {};
+  for (const path of Object.keys(map)) {
+    const m = path.match(/^games\/([^/]+)\/game\.json$/);
+    if (m) games[m[1]] = await readJson(path, null);
+  }
+  for (const k of Object.keys(games)) if (!games[k]) delete games[k];
+  S.games = games;
+  S.loaded = true;
+  return true;
+}
+
+async function commitFiles(message, changes) {
+  const entries = [];
+  for (const [path, content] of Object.entries(changes)) {
+    if (content === null) {
+      if (S.tree[path]) entries.push({ path, mode: "100644", type: "blob", sha: null });
+      continue;
+    }
+    const blob = await gh("POST", R() + "/git/blobs", { content, encoding: "base64" });
+    entries.push({ path, mode: "100644", type: "blob", sha: blob.sha });
+  }
+  if (!entries.length) return;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const ref = await gh("GET", R() + "/git/ref/heads/main");
+    const head = ref.object.sha;
+    const parent = await gh("GET", R() + "/git/commits/" + head);
+    const tree = await gh("POST", R() + "/git/trees", { base_tree: parent.tree.sha, tree: entries });
+    const commit = await gh("POST", R() + "/git/commits", { message, tree: tree.sha, parents: [head] });
+    try {
+      await gh("PATCH", R() + "/git/refs/heads/main", { sha: commit.sha });
+      await loadRepo(true);
+      return;
+    } catch (e) {
+      if (e.status !== 422 || attempt === 4) throw e;
+      await sleep(800 + attempt * 700);
+    }
+  }
+}
+
+async function kick() {
+  try { await gh("PUT", R() + "/actions/workflows/countdown-tick.yml/enable"); } catch (e) {}
+  try {
+    await gh("POST", R() + "/actions/workflows/countdown-tick.yml/dispatches", { ref: "main" });
+    S.checker.run = { status: "queued" };
+  } catch (e) { toast("Saved, but couldn't start a check right now: " + e.message, true); }
+  render();
+  pollSoon();
+}
+
+async function loadSecrets() {
+  try {
+    const r = await gh("GET", R() + "/actions/secrets?per_page=100");
+    S.secrets = new Set((r.secrets || []).map((s) => s.name));
+  } catch (e) {}
+}
+
+async function setSecret(name, value) {
+  await sodium.ready;
+  const pk = await gh("GET", R() + "/actions/secrets/public-key");
+  const sealed = sodium.crypto_box_seal(sodium.from_string(value), sodium.from_base64(pk.key, sodium.base64_variants.ORIGINAL));
+  await gh("PUT", R() + "/actions/secrets/" + name, { encrypted_value: sodium.to_base64(sealed, sodium.base64_variants.ORIGINAL), key_id: pk.key_id });
+  S.secrets.add(name);
+}
+
+async function loadChecker() {
+  try {
+    const wf = await gh("GET", R() + "/actions/workflows/countdown-tick.yml");
+    S.checker.enabled = wf.state === "active";
+    const runs = await gh("GET", R() + "/actions/workflows/countdown-tick.yml/runs?per_page=1");
+    const prev = S.checker.run;
+    S.checker.run = (runs.workflow_runs || [])[0] || null;
+    if (prev && prev.status !== "completed" && S.checker.run && S.checker.run.status === "completed") return await loadRepo(true);
+  } catch (e) {}
+  return false;
+}
+
+const keyName = (accountId) => "ROBLOX_KEY_" + String(accountId || "MAIN").toUpperCase().replace(/[^A-Z0-9_]/g, "_");
+const stageFile = (h) => "icons/" + (h <= 0 ? "update" : String(h).replace(".", "_") + "h") + ".png";
+function stageTag(h) {
+  if (h <= 0) return "LIVE";
+  if (h < 1) return Math.round(h * 60) + "M";
+  return h + "H";
+}
+function stageName(st) {
+  const h = Number(st.hours_before);
+  if (st.name) return st.name;
+  if (h <= 0) return "Update is live";
+  if (h < 1) return Math.round(h * 60) + " minutes left";
+  return h + (h === 1 ? " hour left" : " hours left");
+}
+const sortStages = (stages) => [...stages].sort((a, b) => Number(b.hours_before) - Number(a.hours_before));
+const gstate = (gid) => (S.state.games || {})[gid] || {};
+const gameName = (gid) => gstate(gid).game_name || (S.games[gid] && S.games[gid].name) || "New game";
+const gamePath = (gid, rel) => "games/" + gid + "/" + rel;
+
+function fmtWhen(d) {
+  return d.toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+function fmtShort(d) {
+  return d.toLocaleString(undefined, { weekday: "short", hour: "2-digit", minute: "2-digit" });
+}
+function fmtLeft(ms) {
+  if (ms <= 0) return "now";
+  const m = Math.floor(ms / 60000), d = Math.floor(m / 1440), h = Math.floor((m % 1440) / 60), mm = m % 60;
+  if (d) return d + "d " + h + "h";
+  if (h) return h + "h " + mm + "m";
+  return mm + "m";
+}
+function fmtAgo(iso) {
+  const ms = Date.now() - new Date(iso).getTime();
+  if (ms < 60000) return "just now";
+  return fmtLeft(ms) + " ago";
+}
+
+function countdownInfo(gid) {
+  const cfg = S.games[gid] || {};
+  const st = gstate(gid);
+  const req = cfg.countdown || null;
+  const stages = sortStages(cfg.stages || []);
+  const pendingStart = req && !req.cancel && req.id !== st.countdown_id;
+  const pendingCancel = req && req.cancel && st.active && req.id === st.countdown_id;
+  const running = st.active && req && req.id === st.countdown_id && !req.cancel;
+  const updateAt = running ? new Date(st.update_at) : pendingStart ? new Date(req.update_at) : null;
+  const finished = !st.active && st.finished_at && req && req.id === st.countdown_id;
+  let next = null;
+  if (updateAt) {
+    for (const s of stages) {
+      const at = new Date(updateAt.getTime() - Number(s.hours_before) * 3600000);
+      if (at > new Date()) { next = { stage: s, at }; break; }
+    }
+  }
+  return { cfg, st, req, stages, pendingStart, pendingCancel, running, updateAt, finished, next };
+}
+
+function assetStatus(gid, stage) {
+  const st = gstate(gid);
+  const key = String(Number(stage.hours_before));
+  const digest = (st.stage_assets || {})[key];
+  const entry = digest && (st.assets || {})[digest];
+  return entry ? entry.status : null;
+}
+
+function missingIcons(gid) {
+  const cfg = S.games[gid] || {};
+  const pend = S.pending[gid] || {};
+  return sortStages(cfg.stages || []).filter((s) => !pend[s.image] && !S.tree[gamePath(gid, s.image)]);
+}
+
+function gameStatus(gid) {
+  const i = countdownInfo(gid);
+  if (i.st.last_problem) return { cls: "bad", text: "Needs attention" };
+  if (i.pendingStart) return { cls: "live", text: "Starting…" };
+  if (i.pendingCancel) return { cls: "warn", text: "Cancelling…" };
+  if (i.running) return { cls: "live", text: i.next ? stageTag(i.next.stage.hours_before) + " in " + fmtLeft(i.next.at - new Date()) : "Finishing…" };
+  if (i.finished) return { cls: "good", text: "Done" };
+  if (!i.st.resolved_for) return { cls: "", text: "Checking game…" };
+  return { cls: "", text: "No countdown" };
+}
+
+async function imageSrc(gid, rel) {
+  const pend = (S.pending[gid] || {})[rel];
+  if (pend) return pend.url;
+  const sha = S.tree[gamePath(gid, rel)];
+  if (!sha) return null;
+  return "data:image/png;base64," + (await blobB64(sha));
+}
+
+function toIcon(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const side = Math.min(img.naturalWidth, img.naturalHeight);
+      const c = document.createElement("canvas");
+      c.width = c.height = 512;
+      c.getContext("2d").drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, 512, 512);
+      URL.revokeObjectURL(url);
+      c.toBlob(async (blob) => {
+        if (!blob) return reject(new Error("Couldn't read that picture"));
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        resolve({ b64: b64encodeBytes(bytes), url: URL.createObjectURL(blob) });
+      }, "image/png");
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("That file isn't a picture this phone can read. Try a PNG or JPG.")); };
+    img.src = url;
+  });
+}
+
+function parseGameInput(text) {
+  const t = String(text || "").trim();
+  const m = t.match(/roblox\.com\/(?:[a-z-]+\/)?games\/(\d+)/i) || t.match(/^(\d{4,})$/);
+  return m ? m[1] : null;
+}
+
+function localInputValue(d) {
+  const p = (n) => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + "T" + p(d.getHours()) + ":" + p(d.getMinutes());
+}
+
+function pagesUrl() {
+  const [owner, name] = S.repo.split("/");
+  return "https://" + owner.toLowerCase() + ".github.io/" + name + "/";
+}
+
+function qrSvg(text) {
+  const q = qrcode(0, "L");
+  q.addData(text);
+  q.make();
+  return q.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+}
+
+function viewConnect(err) {
+  const tokenUrl = "https://github.com/settings/tokens/new?scopes=repo,workflow&description=" + encodeURIComponent("Icon Countdown app");
+  return `
+  <header class="top"><div class="brand">Icon Countdown<small>Countdown icons for your Roblox games</small></div></header>
+  <section class="card">
+    <h2>Connect once</h2>
+    <p class="small muted">The app runs your countdowns on GitHub's free servers, so they keep going when your PC is off. You only do this part one time.</p>
+    <ol class="steps">
+      <li>Sign in or make a free account on GitHub.</li>
+      <li><a href="${tokenUrl}" target="_blank" rel="noopener">Open this link</a>. Set <b>Expiration</b> to <b>No expiration</b>, scroll down and press <b>Generate token</b>. The boxes it needs are already ticked.</li>
+      <li>Copy the token (starts with <span class="code">ghp_</span>) and paste it here.</li>
+    </ol>
+    <form id="connectForm" class="row">
+      <input class="grow" type="password" id="tokenInput" placeholder="ghp_…" autocomplete="off" aria-label="GitHub token">
+      <button class="btn primary" type="submit">Connect</button>
+    </form>
+    ${err ? `<div class="banner bad">${esc(err)}</div>` : ""}
+  </section>`;
+}
+
+function viewSetup() {
+  const s = S.setup || { steps: [], done: false, error: null };
+  const labels = s.upgrade ? ["Check your project", "Install the new version", "Check your app link"] : ["Create your countdown project", "Install the countdown engine", "Turn on your app link"];
+  return `
+  <header class="top"><div class="brand">Icon Countdown<small>Signed in as ${esc(S.login)}</small></div></header>
+  <section class="card">
+    <h2>${s.upgrade ? "Update your app" : "Set up your app"}</h2>
+    <p class="small muted">${s.upgrade ? "This file has a newer version of the app and engine. Your games, icons, keys and settings stay as they are." : `This makes a project called <b>${esc(REPO_NAME)}</b> on your GitHub with the engine that changes your icons. Your Roblox key and notification settings get stored there as encrypted secrets.`}</p>
+    <ul class="progress">${labels.map((l, i) => `<li class="${s.steps[i] === "done" ? "done" : s.steps[i] === "doing" ? "doing" : ""}">${l}</li>`).join("")}</ul>
+    ${s.error ? `<div class="banner bad"><b>Setup stopped.</b>${esc(s.error)}</div>` : ""}
+    ${s.running ? "" : `<button class="btn primary block" id="runSetup">${s.error ? "Try again" : s.upgrade ? "Update" : "Set it up"}</button>`}
+  </section>
+  <button class="btn ghost" id="signOut">Use a different GitHub account</button>`;
+}
+
+function checkerPill() {
+  const run = S.checker.run;
+  if (run && run.status && run.status !== "completed") return `<span class="pill live">Checking now</span>`;
+  const anyActive = Object.keys(S.games).some((g) => countdownInfo(g).running || countdownInfo(g).pendingStart);
+  if (S.checker.enabled && anyActive) return `<span class="pill good">Running</span>`;
+  return `<span class="pill">Idle</span>`;
+}
+
+function header(sub) {
+  return `<header class="top"><div class="brand">Icon Countdown<small>${sub}</small></div>${checkerPill()}</header>`;
+}
+
+function setupNudges() {
+  const items = [];
+  const accounts = S.settings.accounts || [];
+  if (!accounts.some((a) => S.secrets.has(keyName(a.id)))) items.push(`<b>Add your Roblox key</b> so the app can change icons. <button class="btn small primary" data-go="settings">Add key</button>`);
+  if (!S.secrets.has("NTFY_TOPIC") && !S.secrets.has("DISCORD_WEBHOOK_URL")) items.push(`<b>Turn on notifications</b> to hear about every icon change. <button class="btn small" data-go="settings">Set up</button>`);
+  return items.map((t) => `<div class="banner warn">${t}</div>`).join("");
+}
+
+function viewGames() {
+  const ids = Object.keys(S.games).sort((a, b) => gameName(a).localeCompare(gameName(b)));
+  const cards = ids.map((gid) => {
+    const s = gameStatus(gid);
+    const icon = gstate(gid).icon_url;
+    return `<button class="gamecard" data-open="${esc(gid)}">
+      ${icon ? `<img class="gicon" src="${esc(icon)}" alt="" referrerpolicy="no-referrer" onerror="this.classList.add('broken')">` : `<div class="gicon"></div>`}
+      <span class="meta"><span class="name">${esc(gameName(gid))}</span><span><span class="pill ${s.cls}">${esc(s.text)}</span></span></span>
+      <span class="chev" aria-hidden="true">›</span></button>`;
+  }).join("");
+  return `${header("Your games")}
+  ${setupNudges()}
+  ${ids.length ? `<div class="gamelist">${cards}</div>` : `<section class="card empty"><div class="art">24H</div><h2>Add your first game</h2><p class="small muted">Paste its Roblox link, pick your countdown icons, set the update time.</p></section>`}
+  ${viewAddGame()}`;
+}
+
+function viewAddGame() {
+  const accounts = S.settings.accounts || [];
+  return `<section class="card">
+    <h2>Add a game</h2>
+    <form id="addGame" class="row" autocomplete="off">
+      <input class="grow" type="text" id="gameLink" placeholder="Paste the game link or ID" aria-label="Game link or ID">
+      ${accounts.length > 1 ? `<select id="gameAccount" aria-label="Who owns the game">${accounts.map((a) => `<option value="${esc(a.id)}">${esc(a.label)}</option>`).join("")}</select>` : ""}
+      <button class="btn primary" type="submit">Add</button>
+    </form>
+    <p class="small muted">Example: roblox.com/games/104461273089375/… ${accounts.length > 1 ? "Pick the key that owns the game." : ""}</p>
+  </section>`;
+}
+
+function stageTileStatus(gid, s) {
+  if ((S.pending[gid] || {})[s.image]) return { cls: "warn", text: "Not saved" };
+  const a = assetStatus(gid, s);
+  if (a === "approved") return { cls: "good", text: "Approved" };
+  if (a === "rejected") return { cls: "bad", text: "Rejected" };
+  if (a === "moderating" || a === "uploading") return { cls: "warn", text: "Reviewing" };
+  return null;
+}
+
+function viewGame(gid) {
+  const i = countdownInfo(gid);
+  if (!S.games[gid]) return `<button class="back" data-back>‹ Games</button><section class="card"><p>This game was removed.</p></section>`;
+  const draft = S.draft[gid] || {};
+  const stages = draft.stages ? sortStages(draft.stages) : i.stages;
+  const editing = !!draft.editing;
+  const pend = S.pending[gid] || {};
+  const dirty = Object.keys(pend).length > 0 || !!draft.stages;
+  const missing = missingIcons(gid);
+  const icon = i.st.icon_url;
+  const account = (S.settings.accounts || []).find((a) => a.id === (i.cfg.account || "MAIN"));
+  const tiles = stages.map((s) => {
+    const tag = stageTag(Number(s.hours_before));
+    const stt = stageTileStatus(gid, s);
+    const has = !!(pend[s.image] || S.tree[gamePath(gid, s.image)]);
+    return `<div class="tile ${has ? "has" : ""}" role="button" tabindex="0" data-pick="${esc(s.image)}" aria-label="${esc(stageName(s))} icon">
+      ${has ? `<img data-src="${esc(s.image)}" alt="">` : `<span class="add">+ Add</span>`}
+      <span class="tag ${Number(s.hours_before) <= 0 ? "live" : ""}">${tag}</span>
+      ${stt ? `<span class="st ${stt.cls}">${stt.text}</span>` : ""}
+      ${editing ? `<button class="x" type="button" data-rmstage="${esc(s.image)}" aria-label="Remove ${esc(stageName(s))}">×</button>` : ""}
+    </div>`;
+  }).join("");
+
+  let countdown;
+  if (i.running || i.pendingStart) {
+    const rows = i.stages.map((s) => {
+      const at = new Date(i.updateAt.getTime() - Number(s.hours_before) * 3600000);
+      const done = i.running && i.st.applied_stage != null && Number(s.hours_before) >= Number(i.st.applied_stage);
+      const now = i.running && String(Number(s.hours_before)) === String(i.st.applied_stage);
+      return `<li class="${now ? "now" : done ? "done" : ""}"><span class="badge">${stageTag(Number(s.hours_before))}</span><span>${esc(stageName(s))}</span><span class="when">${esc(fmtShort(at))}</span></li>`;
+    }).join("");
+    countdown = `<section class="card">
+      <div class="row"><h2 class="grow">Update in</h2>${i.pendingStart ? `<span class="pill live">Starting…</span>` : `<span class="pill good">Counting down</span>`}</div>
+      <div class="clock" data-until="${i.updateAt.toISOString()}">${esc(fmtLeft(i.updateAt - new Date()))}</div>
+      <p class="small muted">${esc(fmtWhen(i.updateAt))}${i.next ? ` · next icon: <b>${esc(stageName(i.next.stage))}</b> in <span data-until="${i.next.at.toISOString()}">${esc(fmtLeft(i.next.at - new Date()))}</span>` : ""}</p>
+      <ul class="timeline">${rows}</ul>
+      ${S.confirm === "cancel:" + gid ? `<div class="banner warn"><b>Stop this countdown?</b>Choose what the icon should show afterwards.</div>
+        <div class="split"><button class="btn danger" data-cancel="keep">Stop, keep icon</button><button class="btn danger" data-cancel="restore">Stop, put old icon back</button></div>
+        <button class="btn ghost" data-confirm="">Keep counting down</button>`
+        : `<button class="btn ghost" data-confirm="cancel:${esc(gid)}">Cancel countdown…</button>`}
+    </section>`;
+  } else {
+    const def = i.req && i.req.update_at && new Date(i.req.update_at) > new Date() ? new Date(i.req.update_at) : new Date(Date.now() + 26 * 3600000);
+    def.setMinutes(0, 0, 0);
+    countdown = `<section class="card">
+      <h2>${i.finished ? "Start another countdown" : "Start a countdown"}</h2>
+      <label class="field">When does the update come out?
+        <input type="datetime-local" id="updateTime" value="${localInputValue(draft.when ? new Date(draft.when) : def)}" min="${localInputValue(new Date())}"></label>
+      ${missing.length ? `<p class="small muted">Add an icon for: ${missing.map((s) => `<b>${esc(stageTag(Number(s.hours_before)))}</b>`).join(", ")}</p>` : `<p class="small muted">Start a day or more early if you can. Roblox has to approve each icon before it can be shown.</p>`}
+      <button class="btn primary block" id="startBtn" ${missing.length ? "disabled" : ""}>${dirty ? "Save icons and start" : "Start countdown"}</button>
+    </section>`;
+  }
+
+  const problem = i.st.last_problem ? `<div class="banner bad"><b>Needs attention</b>${esc(i.st.last_problem)}</div>` : "";
+  const rejected = stages.filter((s) => !pend[s.image] && assetStatus(gid, s) === "rejected");
+  const rejBanner = rejected.length ? `<div class="banner bad"><b>Roblox rejected ${rejected.map((s) => stageTag(Number(s.hours_before))).join(", ")}</b>Tap that icon, pick a different picture, and save. It re-uploads by itself.</div>` : "";
+
+  return `<button class="back" data-back>‹ Games</button>
+  <section class="hero-game">
+    ${icon ? `<img class="gicon big" src="${esc(icon)}" alt="" referrerpolicy="no-referrer" onerror="this.classList.add('broken')">` : `<div class="gicon big"></div>`}
+    <div><h1>${esc(gameName(gid))}</h1><p class="small muted">${i.st.universe_id ? "Universe " + esc(i.st.universe_id) : "Checking game…"}${account && (S.settings.accounts || []).length > 1 ? " · " + esc(account.label) : ""}</p></div>
+  </section>
+  ${problem}${rejBanner}
+  ${countdown}
+  <section class="card">
+    <div class="row"><h2 class="grow">Countdown icons</h2><button class="btn small ghost" data-editstages>${editing ? "Done" : "Edit stages"}</button></div>
+    <p class="small muted">Tap a square to pick a picture from your phone. Square pictures look best.</p>
+    <div class="tiles">${tiles}</div>
+    ${editing ? `<form id="addStage" class="row"><input class="grow" type="number" id="stageHours" min="0.25" max="168" step="0.25" placeholder="Hours before update, e.g. 0.5" aria-label="Hours before update"><button class="btn small" type="submit">Add stage</button></form>` : ""}
+    ${dirty ? `<div class="split"><button class="btn primary" id="saveIcons">Save changes</button><button class="btn ghost" id="discard">Undo changes</button></div>` : ""}
+  </section>
+  <section class="card">
+    <h3>Game settings</h3>
+    ${(S.settings.accounts || []).length > 1 ? `<label class="field">Roblox key used for this game<select id="accountSel">${S.settings.accounts.map((a) => `<option value="${esc(a.id)}" ${a.id === (i.cfg.account || "MAIN") ? "selected" : ""}>${esc(a.label)}</option>`).join("")}</select></label>` : ""}
+    ${S.confirm === "delete:" + gid ? `<div class="banner bad"><b>Remove this game from the app?</b>Its icons stay on Roblox. The current game icon isn't changed.</div><div class="split"><button class="btn danger" id="deleteGame">Remove</button><button class="btn ghost" data-confirm="">Keep</button></div>` : `<button class="btn ghost" data-confirm="delete:${esc(gid)}" ${i.running ? "disabled" : ""}>Remove game…</button>`}
+  </section>`;
+}
+
+function viewActivity() {
+  const log = S.state.log || [];
+  const items = log.map((e) => `<li class="${esc(e.kind)}"><span class="t">${esc(fmtAgo(e.t))} · ${esc(fmtWhen(new Date(e.t)))}</span><b>${esc(e.title)}</b><span class="m">${esc(e.message)}</span></li>`).join("");
+  return `${header("Activity")}
+  ${items ? `<ul class="log">${items}</ul>` : `<section class="card empty"><h2>Nothing yet</h2><p class="small muted">Icon changes, approvals and problems show up here and on your phone.</p></section>`}`;
+}
+
+function viewSettings() {
+  const accounts = S.settings.accounts || [];
+  const topic = store.get("ic_topic") || "";
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const keyRows = accounts.map((a) => {
+    const saved = S.secrets.has(keyName(a.id));
+    const used = Object.values(S.games).some((g) => (g.account || "MAIN") === a.id);
+    return `<div class="card" style="background:var(--bg)">
+      <div class="row"><b class="grow">${esc(a.label)}</b>${saved ? `<span class="pill good">Saved</span>` : `<span class="pill warn">Not added</span>`}</div>
+      <form class="row" data-keyform="${esc(a.id)}"><input class="grow" type="password" placeholder="${saved ? "Paste a new key to replace it" : "Paste the Roblox API key"}" autocomplete="off" aria-label="Roblox API key for ${esc(a.label)}"><button class="btn small primary" type="submit">Save</button></form>
+      ${a.id !== "MAIN" && !used ? `<button class="btn small ghost" data-rmaccount="${esc(a.id)}">Remove this key</button>` : ""}
+    </div>`;
+  }).join("");
+  const url = pagesUrl();
+  return `${header("Settings")}
+  <section class="card">
+    <h2>Roblox keys</h2>
+    <p class="small muted">One key covers all your games, including new ones. Games owned by a group need a key made under that group.</p>
+    ${keyRows}
+    <details><summary>How to make a Roblox key</summary>
+      <ol class="steps">
+        <li>On create.roblox.com open <b>Open Cloud → API Keys → Create API Key</b>. For a group game, switch to the group at the top first.</li>
+        <li>Under <b>Access Permissions</b> add <b>assets</b> with Read and Write, and <b>universe</b> with Read. Optional: <b>legacy-universe</b> with Manage.</li>
+        <li>Turn <b>off</b> "Restrict by Experience" so it works for every game, including future ones.</li>
+        <li>Leave "Restrict IP addresses" off. Save, copy the key and paste it above.</li>
+        <li>Roblox expires keys that go unused for 60 days. If that happens, paste a new one here.</li>
+      </ol></details>
+    <form id="addAccount" class="row"><input class="grow" type="text" id="accountLabel" placeholder="Group name, e.g. Boring Second Studios" aria-label="Name for a group key"><button class="btn small" type="submit">Add group key</button></form>
+  </section>
+  <section class="card">
+    <h2>Notifications</h2>
+    <h3>Phone (ntfy app)</h3>
+    <p class="small muted">Install the free <b>ntfy</b> app, tap <b>+</b> and subscribe to your private topic. Anyone who knows the topic name can read it, so keep it random.</p>
+    ${topic ? `<div class="row"><span class="code grow">${esc(topic)}</span><button class="btn small" data-copy="${esc(topic)}">Copy</button></div>` : ""}
+    <div class="row">${S.secrets.has("NTFY_TOPIC") ? `<span class="pill good">On</span>` : `<span class="pill">Off</span>`}<button class="btn small primary" id="makeTopic">${S.secrets.has("NTFY_TOPIC") ? "Make a new topic" : "Make my topic"}</button></div>
+    <h3>Discord</h3>
+    <p class="small muted">In Discord: channel settings → Integrations → Webhooks → New Webhook → Copy URL. Paste it here.</p>
+    <form class="row" id="discordForm"><input class="grow" type="password" id="discordUrl" placeholder="${S.secrets.has("DISCORD_WEBHOOK_URL") ? "Saved. Paste a new URL to replace it" : "https://discord.com/api/webhooks/…"}" autocomplete="off" aria-label="Discord webhook URL"><button class="btn small primary" type="submit">Save</button></form>
+    <label class="check"><input type="checkbox" id="dAnnounce" ${S.settings.discord_announcements !== false ? "checked" : ""}> Post each new icon to Discord (good for your players)</label>
+    <label class="check"><input type="checkbox" id="dErrors" ${S.settings.discord_errors ? "checked" : ""}> Also post problems to Discord</label>
+    <button class="btn" id="testBtn">Send a test notification</button>
+  </section>
+  <section class="card">
+    <h2>Put the app on your phone</h2>
+    ${location.host.endsWith("github.io") ? `<p class="small muted">On this page, open your browser menu and pick <b>Add to Home screen</b>. It opens like a normal app.</p>` : ""}
+    <p class="small muted">On another device, scan this code. It signs that device in, so don't share it.</p>
+    ${S.showQr ? `<div class="qr">${qrSvg(url + "#t=" + S.token + "&r=" + S.repo)}</div><p class="small muted">Then use <b>Add to Home screen</b>. If the page says 404, wait a minute: GitHub is still publishing it.</p>` : `<button class="btn" id="showQr">Show sign-in code</button>`}
+    <div class="row"><span class="code grow">${esc(url)}</span><button class="btn small" data-copy="${esc(url)}">Copy</button></div>
+  </section>
+  <section class="card">
+    <h2>Time zone</h2>
+    <p class="small">Notifications show times in <b>${esc(S.settings.timezone || "UTC")}</b>.</p>
+    ${tz && tz !== S.settings.timezone ? `<button class="btn small" id="useTz" data-tz="${esc(tz)}">Use ${esc(tz)}</button>` : ""}
+  </section>
+  <section class="card">
+    <h2>Account</h2>
+    <p class="small muted">Signed in to GitHub as <b>${esc(S.login)}</b>. Project: ${esc(S.repo)}. App ${APP_VERSION}.</p>
+    <button class="btn ghost" id="signOut">Sign out on this device</button>
+  </section>`;
+}
+
+function render() {
+  const tabs = $("#tabs");
+  if (!S.token) { tabs.hidden = true; app.innerHTML = viewConnect(S.connectError); return bind(); }
+  if (S.setup && !S.setup.done) { tabs.hidden = true; app.innerHTML = viewSetup(); return bind(); }
+  if (!S.loaded) { tabs.hidden = true; app.innerHTML = `${header("Loading…")}<section class="card"><p class="muted">Loading your games…</p></section>`; return; }
+  tabs.hidden = false;
+  for (const b of tabs.querySelectorAll("button")) b.setAttribute("aria-current", String(b.dataset.tab === (S.view === "game" ? "games" : S.view)));
+  const scroll = window.scrollY;
+  const focusId = document.activeElement && document.activeElement.id;
+  const keep = {};
+  for (const el of app.querySelectorAll("input[id]")) if (el.type !== "file") keep[el.id] = el.value;
+  if (S.view === "game") app.innerHTML = viewGame(S.gameId);
+  else if (S.view === "activity") app.innerHTML = viewActivity();
+  else if (S.view === "settings") app.innerHTML = viewSettings();
+  else app.innerHTML = viewGames();
+  for (const [id, v] of Object.entries(keep)) { const el = document.getElementById(id); if (el && el.type !== "datetime-local" && v) el.value = v; }
+  if (focusId) { const el = document.getElementById(focusId); if (el) el.focus({ preventScroll: true }); }
+  window.scrollTo(0, scroll);
+  bind();
+  hydrateImages();
+}
+
+async function hydrateImages() {
+  const gid = S.gameId;
+  for (const img of app.querySelectorAll("img[data-src]")) {
+    try { const src = await imageSrc(gid, img.dataset.src); if (src) img.src = src; } catch (e) {}
+  }
+}
+
+function go(view, gameId) {
+  if (view === "game") history.pushState({ v: "game", g: gameId }, "");
+  S.view = view; S.gameId = gameId || null; S.confirm = null;
+  window.scrollTo(0, 0);
+  render();
+}
+window.addEventListener("popstate", () => { if (S.view === "game") { S.view = "games"; S.gameId = null; render(); } });
+
+async function guard(fn, okMsg) {
+  if (S.busy) return;
+  S.busy = true;
+  document.body.style.cursor = "progress";
+  try { await fn(); if (okMsg) toast(okMsg); }
+  catch (e) {
+    const msg = e.status === 401 ? "GitHub didn't accept your token. Sign out and connect again." : e.message || String(e);
+    toast(msg, true);
+  }
+  finally { S.busy = false; document.body.style.cursor = ""; render(); }
+}
+
+async function saveGame(gid, extra, message) {
+  const cfg = { ...S.games[gid] };
+  const draft = S.draft[gid] || {};
+  if (draft.stages) cfg.stages = sortStages(draft.stages);
+  Object.assign(cfg, extra || {});
+  const changes = { [gamePath(gid, "game.json")]: b64encodeText(JSON.stringify(cfg, null, 2) + "\n") };
+  for (const [rel, p] of Object.entries(S.pending[gid] || {})) changes[gamePath(gid, rel)] = p.b64;
+  if (draft.stages) {
+    const keep = new Set(cfg.stages.map((s) => s.image));
+    for (const s of S.games[gid].stages || []) if (!keep.has(s.image)) changes[gamePath(gid, s.image)] = null;
+  }
+  await commitFiles(message, changes);
+  delete S.pending[gid];
+  if (S.draft[gid]) { delete S.draft[gid].stages; delete S.draft[gid].editing; }
+}
+
+let pickTarget = null;
+function bind() {
+  const on = (sel, ev, fn) => { for (const el of app.querySelectorAll(sel)) el.addEventListener(ev, fn); };
+  on("#connectForm", "submit", async (e) => {
+    e.preventDefault();
+    const t = $("#tokenInput").value.trim();
+    if (!t) return;
+    await connect(t);
+  });
+  on("#runSetup", "click", () => runSetup());
+  on("#signOut", "click", () => { store.set("ic_token", null); store.set("ic_repo", null); location.hash = ""; location.reload(); });
+  on("[data-go]", "click", (e) => go(e.currentTarget.dataset.go));
+  on("[data-open]", "click", (e) => go("game", e.currentTarget.dataset.open));
+  on("[data-back]", "click", () => history.back());
+  on("[data-confirm]", "click", (e) => { S.confirm = e.currentTarget.dataset.confirm || null; render(); });
+  on("[data-copy]", "click", async (e) => {
+    try { await navigator.clipboard.writeText(e.currentTarget.dataset.copy); toast("Copied"); } catch (err) { toast("Couldn't copy. Press and hold the text to copy it.", true); }
+  });
+  on("#addGame", "submit", (e) => {
+    e.preventDefault();
+    const id = parseGameInput($("#gameLink").value);
+    if (!id) return toast("Paste a Roblox game link like roblox.com/games/123…/name, or the game's ID number.", true);
+    const sel = $("#gameAccount");
+    const gid = "g" + Date.now().toString(36);
+    guard(async () => {
+      const cfg = {
+        place_id: id,
+        account: sel ? sel.value : "MAIN",
+        stages: DEFAULT_HOURS.map((h) => ({ hours_before: h, image: stageFile(h) }))
+      };
+      await commitFiles("Add game", { [gamePath(gid, "game.json")]: b64encodeText(JSON.stringify(cfg, null, 2) + "\n") });
+      go("game", gid);
+      await kick();
+    }, "Game added. Fetching its name and icon…");
+  });
+  for (const el of app.querySelectorAll("[data-pick]")) {
+    const pick = (e) => {
+      if (e.target.closest("[data-rmstage]")) return;
+      pickTarget = el.dataset.pick;
+      $("#picker").value = "";
+      $("#picker").click();
+    };
+    el.addEventListener("click", pick);
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(e); } });
+  }
+  on("[data-rmstage]", "click", (e) => {
+    e.stopPropagation();
+    const gid = S.gameId, img = e.currentTarget.dataset.rmstage;
+    const d = (S.draft[gid] = S.draft[gid] || {});
+    d.stages = (d.stages || S.games[gid].stages || []).filter((s) => s.image !== img);
+    if (S.pending[gid]) delete S.pending[gid][img];
+    render();
+  });
+  on("[data-editstages]", "click", () => {
+    const d = (S.draft[S.gameId] = S.draft[S.gameId] || {});
+    d.editing = !d.editing;
+    render();
+  });
+  on("#addStage", "submit", (e) => {
+    e.preventDefault();
+    const h = Math.round(Number($("#stageHours").value) * 4) / 4;
+    if (!(h > 0 && h <= 168)) return toast("Type how many hours before the update, between 0.25 and 168.", true);
+    const gid = S.gameId;
+    const d = (S.draft[gid] = S.draft[gid] || {});
+    const list = d.stages || [...(S.games[gid].stages || [])];
+    if (list.some((s) => Number(s.hours_before) === h)) return toast("That stage already exists.", true);
+    list.push({ hours_before: h, image: stageFile(h) });
+    d.stages = sortStages(list);
+    $("#stageHours").value = "";
+    render();
+  });
+  on("#discard", "click", () => { delete S.pending[S.gameId]; delete S.draft[S.gameId]; render(); });
+  on("#saveIcons", "click", () => guard(async () => {
+    const gid = S.gameId;
+    await saveGame(gid, {}, "Update countdown icons");
+    if (countdownInfo(gid).running) await kick();
+  }, "Saved"));
+  on("#updateTime", "change", (e) => { const d = (S.draft[S.gameId] = S.draft[S.gameId] || {}); d.when = new Date(e.target.value).toISOString(); });
+  on("#startBtn", "click", () => {
+    const gid = S.gameId;
+    const val = $("#updateTime").value;
+    const when = new Date(val);
+    if (!val || isNaN(when)) return toast("Pick the update date and time.", true);
+    const first = Math.max(...((S.draft[gid] || {}).stages || S.games[gid].stages).map((s) => Number(s.hours_before)));
+    if (when <= new Date()) return toast("That time has already passed.", true);
+    guard(async () => {
+      await saveGame(gid, { countdown: { id: "c" + Date.now().toString(36), update_at: when.toISOString() } }, "Start countdown");
+      if (S.draft[gid]) delete S.draft[gid].when;
+      await kick();
+    }, when - new Date() < first * 3600000 ? "Started. It's already inside the countdown, so the right icon goes up as soon as Roblox approves it." : "Countdown started");
+  });
+  on("[data-cancel]", "click", (e) => {
+    const gid = S.gameId, restore = e.currentTarget.dataset.cancel === "restore";
+    guard(async () => {
+      const req = S.games[gid].countdown || {};
+      await saveGame(gid, { countdown: { ...req, cancel: true, restore } }, "Cancel countdown");
+      S.confirm = null;
+      await kick();
+    }, "Cancelling…");
+  });
+  on("#accountSel", "change", (e) => guard(async () => {
+    await saveGame(S.gameId, { account: e.target.value }, "Change game key");
+    await kick();
+  }, "Saved"));
+  on("#deleteGame", "click", () => {
+    const gid = S.gameId;
+    guard(async () => {
+      const changes = {};
+      for (const p of Object.keys(S.tree)) if (p.startsWith("games/" + gid + "/")) changes[p] = null;
+      await commitFiles("Remove game", changes);
+      S.confirm = null; S.view = "games"; S.gameId = null;
+    }, "Game removed");
+  });
+  for (const f of app.querySelectorAll("[data-keyform]")) f.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = f.querySelector("input");
+    const v = input.value.trim();
+    if (v.length < 20) return toast("That doesn't look like a Roblox API key. Copy the whole key.", true);
+    guard(async () => { await setSecret(keyName(f.dataset.keyform), v); input.value = ""; if (Object.keys(S.games).length) await kick(); }, "Roblox key saved");
+  });
+  on("#addAccount", "submit", (e) => {
+    e.preventDefault();
+    const label = $("#accountLabel").value.trim();
+    if (!label) return;
+    const id = label.toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 30) || "GROUP";
+    if ((S.settings.accounts || []).some((a) => a.id === id)) return toast("You already have a key with that name.", true);
+    guard(async () => { await saveSettings({ accounts: [...S.settings.accounts, { id, label }] }); $("#accountLabel").value = ""; }, "Added. Now paste that group's key.");
+  });
+  on("[data-rmaccount]", "click", (e) => {
+    const id = e.currentTarget.dataset.rmaccount;
+    guard(async () => {
+      await saveSettings({ accounts: S.settings.accounts.filter((a) => a.id !== id) });
+      try { await gh("DELETE", R() + "/actions/secrets/" + keyName(id)); S.secrets.delete(keyName(id)); } catch (err) {}
+    }, "Removed");
+  });
+  on("#makeTopic", "click", () => guard(async () => {
+    const rnd = Array.from(crypto.getRandomValues(new Uint8Array(8)), (b) => "abcdefghjkmnpqrstuvwxyz23456789"[b % 31]).join("");
+    const topic = "icons-" + rnd;
+    await setSecret("NTFY_TOPIC", topic);
+    store.set("ic_topic", topic);
+  }, "Topic made. Subscribe to it in the ntfy app."));
+  on("#discordForm", "submit", (e) => {
+    e.preventDefault();
+    const v = $("#discordUrl").value.trim();
+    if (!/^https:\/\/(?:ptb\.|canary\.)?discord(?:app)?\.com\/api\/webhooks\//.test(v)) return toast("That isn't a Discord webhook URL. It starts with https://discord.com/api/webhooks/", true);
+    guard(async () => { await setSecret("DISCORD_WEBHOOK_URL", v); $("#discordUrl").value = ""; }, "Discord connected");
+  });
+  on("#dAnnounce", "change", (e) => guard(() => saveSettings({ discord_announcements: e.target.checked }), "Saved"));
+  on("#dErrors", "change", (e) => guard(() => saveSettings({ discord_errors: e.target.checked }), "Saved"));
+  on("#testBtn", "click", () => guard(async () => { await saveSettings({ test_request: "t" + Date.now().toString(36) }); await kick(); }, "Test sent. It arrives in about a minute."));
+  on("#showQr", "click", () => { S.showQr = true; render(); });
+  on("#useTz", "click", (e) => guard(() => saveSettings({ timezone: e.currentTarget.dataset.tz }), "Time zone updated"));
+}
+
+$("#picker").addEventListener("change", async (e) => {
+  const file = e.target.files && e.target.files[0];
+  if (!file || !pickTarget || !S.gameId) return;
+  try {
+    const icon = await toIcon(file);
+    (S.pending[S.gameId] = S.pending[S.gameId] || {})[pickTarget] = icon;
+    render();
+  } catch (err) { toast(err.message, true); }
+});
+
+document.getElementById("tabs").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-tab]");
+  if (b) go(b.dataset.tab);
+});
+
+async function saveSettings(patch) {
+  const next = { ...S.settings, ...patch };
+  await commitFiles("Update settings", { "settings.json": b64encodeText(JSON.stringify(next, null, 2) + "\n") });
+}
+
+async function connect(token) {
+  S.token = token;
+  S.connectError = null;
+  try {
+    const me = await gh("GET", "/user");
+    S.login = me.login;
+  } catch (e) {
+    S.token = null;
+    S.connectError = e.status === 401 ? "GitHub didn't accept that token. Copy the whole token and try again." : "Couldn't reach GitHub: " + e.message;
+    return render();
+  }
+  store.set("ic_token", token);
+  S.repo = store.get("ic_repo") || repoFromLocation() || S.login + "/" + REPO_NAME;
+  try {
+    await gh("GET", R());
+  } catch (e) {
+    if (e.status === 404) {
+      if (!BUNDLE) { S.connectError = "Couldn't find your Icon Countdown project. Open the setup file once to create it."; S.token = null; store.set("ic_token", null); return render(); }
+      S.setup = { steps: [], done: false };
+      return render();
+    }
+    throw e;
+  }
+  store.set("ic_repo", S.repo);
+  await refreshAll(true);
+  if (BUNDLE && BUNDLE.version && (S.tree["app-version.txt"] ? b64decodeText(await blobB64(S.tree["app-version.txt"])).trim() : "") !== BUNDLE.version) {
+    S.setup = { steps: [], done: false, upgrade: true };
+  }
+  render();
+}
+
+function repoFromLocation() {
+  const m = location.host.match(/^([^.]+)\.github\.io$/);
+  const p = location.pathname.split("/").filter(Boolean)[0];
+  return m && p ? m[1] + "/" + p : null;
+}
+
+async function runSetup() {
+  S.setup = { steps: ["doing"], running: true, done: false, upgrade: !!(S.setup && S.setup.upgrade) };
+  render();
+  const mark = (i) => { S.setup.steps[i - 1] = "done"; S.setup.steps[i] = "doing"; render(); };
+  try {
+    try {
+      await gh("POST", "/user/repos", { name: REPO_NAME, description: "Roblox game icon countdowns, run by the Icon Countdown app", auto_init: true, private: false, has_issues: false, has_wiki: false, has_projects: false });
+    } catch (e) { if (e.status !== 422) throw e; }
+    for (let i = 0; i < 20; i++) {
+      try { await gh("GET", R() + "/git/ref/heads/main"); break; } catch (e) { if (i === 19) throw e; await sleep(1500); }
+    }
+    await loadRepo(true);
+    mark(1);
+    const changes = {};
+    for (const [path, b64] of Object.entries(BUNDLE.files)) changes[path] = b64;
+    changes["app-version.txt"] = b64encodeText(BUNDLE.version + "\n");
+    if (!S.tree["settings.json"]) {
+      changes["settings.json"] = b64encodeText(JSON.stringify({
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+        discord_announcements: true,
+        discord_errors: false,
+        accounts: [{ id: "MAIN", label: "My games" }]
+      }, null, 2) + "\n");
+    }
+    await commitFiles(S.setup.upgrade ? "Update Icon Countdown" : "Install Icon Countdown", changes);
+    mark(2);
+    try { await gh("POST", R() + "/pages", { build_type: "legacy", source: { branch: "main", path: "/docs" } }); } catch (e) { if (![409, 422].includes(e.status)) throw e; }
+    mark(3);
+    S.setup = { steps: ["done", "done", "done"], done: true };
+    store.set("ic_repo", S.repo);
+    await refreshAll(true);
+    S.view = "settings";
+    toast("All set. Next: add your Roblox key.");
+    render();
+  } catch (e) {
+    S.setup.running = false;
+    S.setup.error = " " + (e.status === 403 || e.status === 404 ? "Your token is missing a permission. Make a new token with the repo and workflow boxes ticked." : e.message);
+    render();
+  }
+}
+
+async function refreshAll(force) {
+  await loadRepo(force);
+  await Promise.all([loadSecrets(), loadChecker()]);
+}
+
+let pollTimer = null;
+function pollSoon() { clearTimeout(pollTimer); pollTimer = setTimeout(poll, 5000); }
+async function poll() {
+  clearTimeout(pollTimer);
+  if (S.token && S.loaded && !document.hidden && !S.busy) {
+    try {
+      const reloaded = await loadChecker();
+      const changed = (await loadRepo(false)) || reloaded;
+      if (changed && !S.busy) render();
+      else if (!S.busy) updateLiveBits();
+    } catch (e) {}
+  }
+  const active = S.checker.run && S.checker.run.status !== "completed";
+  pollTimer = setTimeout(poll, active ? 6000 : 20000);
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) poll(); });
+
+function updateLiveBits() {
+  for (const el of app.querySelectorAll("[data-until]")) el.textContent = fmtLeft(new Date(el.dataset.until) - new Date());
+  const pill = app.querySelector("header.top .pill");
+  if (pill) pill.outerHTML = checkerPill();
+}
+setInterval(() => { if (!document.hidden) for (const el of app.querySelectorAll("[data-until]")) el.textContent = fmtLeft(new Date(el.dataset.until) - new Date()); }, 15000);
+
+(async function boot() {
+  const hash = new URLSearchParams(location.hash.slice(1));
+  if (hash.get("t")) {
+    store.set("ic_token", hash.get("t"));
+    if (hash.get("r")) store.set("ic_repo", hash.get("r"));
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  const token = store.get("ic_token");
+  if (!token) return render();
+  S.token = token;
+  render();
+  try { await connect(token); } catch (e) { toast(e.message, true); render(); }
+  poll();
+})();
+</script>
+</body>
+</html>

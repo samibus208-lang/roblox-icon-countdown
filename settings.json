@@ -1,0 +1,11 @@
+{
+  "timezone": "Europe/Bucharest",
+  "discord_announcements": true,
+  "discord_errors": false,
+  "accounts": [
+    {
+      "id": "MAIN",
+      "label": "My games"
+    }
+  ]
+}
